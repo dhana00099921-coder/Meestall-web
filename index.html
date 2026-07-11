@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mee Stall — Product Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#241221;
+    --surface:#2F1B2B;
+    --surface-2:#3A2436;
+    --paper:#F7F1E8;
+    --paper-dim:#E8DFD0;
+    --marigold:#E8A93A;
+    --marigold-deep:#C98A22;
+    --teal:#2A9D8F;
+    --muted:#B79FB0;
+    --danger:#D9634A;
+    --radius:16px;
+    --shadow: 0 10px 30px rgba(20,8,18,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Manrope',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  button, input, select, textarea{font-family:inherit;}
+
+  /* ---------- Header ---------- */
+  header.site-header{
+    position:sticky; top:0; z-index:40;
+    background:rgba(36,18,33,0.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(232,169,58,0.18);
+    padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:50%;
+    background:conic-gradient(from 200deg, var(--marigold), var(--teal), var(--marigold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; color:var(--ink); font-size:16px;
+  }
+  .brand-name{font-size:20px; margin:0;}
+  .brand-name span{color:var(--marigold);}
+
+  .toolbar{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1; justify-content:flex-end;
+  }
+  .search-wrap{
+    position:relative; flex:1; min-width:180px; max-width:340px;
+  }
+  .search-wrap input{
+    width:100%; padding:10px 14px 10px 36px;
+    border-radius:999px; border:1px solid rgba(247,241,232,0.15);
+    background:var(--surface); color:var(--paper); font-size:14px;
+    outline:none; transition:border-color .2s;
+  }
+  .search-wrap input:focus{border-color:var(--marigold);}
+  .search-wrap svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.6;}
+
+  select#categoryFilter{
+    padding:10px 14px; border-radius:999px; border:1px solid rgba(247,241,232,0.15);
+    background:var(--surface); color:var(--paper); font-size:14px; outline:none;
+  }
+
+  .admin-toggle{
+    padding:10px 18px; border-radius:999px; border:1px solid var(--marigold);
+    background:transparent; color:var(--marigold); font-weight:700; font-size:13px;
+    cursor:pointer; transition:.2s;
+    white-space:nowrap;
+  }
+  .admin-toggle:hover{background:var(--marigold); color:var(--ink);}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:56px 24px 32px; text-align:center; max-width:720px; margin:0 auto;
+  }
+  .hero .eyebrow{
+    color:var(--marigold); font-weight:700; letter-spacing:.14em; font-size:12px; text-transform:uppercase;
+  }
+  .hero h1{font-size:clamp(28px,5vw,44px); margin:10px 0 10px; line-height:1.1;}
+  .hero p{color:var(--muted); font-size:15px; margin:0;}
+
+  /* ---------- Grid ---------- */
+  main{max-width:1200px; margin:0 auto; padding:8px 24px 80px;}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+    gap:22px;
+    margin-top:28px;
+  }
+
+  .card{
+    background:var(--surface);
+    border-radius:var(--radius);
+    border:1px dashed rgba(232,169,58,0.35);
+    overflow:hidden;
+    position:relative;
+    display:flex; flex-direction:column;
+    box-shadow:var(--shadow);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 16px 36px rgba(20,8,18,0.45);}
+
+  .card .punch{
+    position:absolute; top:14px; left:14px; width:14px; height:14px;
+    background:var(--ink); border-radius:50%; z-index:3;
+    box-shadow: inset 0 0 0 2px rgba(232,169,58,0.4);
+  }
+
+  .price-tag{
+    position:absolute; top:14px; right:-2px; z-index:3;
+    background:var(--marigold); color:var(--ink);
+    font-weight:800; font-size:14px; padding:6px 14px 6px 18px;
+    border-radius:8px 0 0 8px;
+    box-shadow:-4px 4px 0 rgba(0,0,0,0.12);
+  }
+
+  .card-img{
+    width:100%; aspect-ratio:4/3; object-fit:cover; background:var(--surface-2);
+    display:block;
+  }
+  .card-img-fallback{
+    width:100%; aspect-ratio:4/3; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); font-size:13px;
+  }
+
+  .card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .card-cat{
+    font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); font-weight:700;
+  }
+  .card-title{font-size:18px; margin:0; line-height:1.25;}
+  .card-desc{
+    font-size:13.5px; color:var(--muted); margin:0; line-height:1.5;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+
+  .card-footer{
+    margin-top:auto; display:flex; gap:8px; padding-top:10px;
+  }
+  .open-btn{
+    flex:1; text-align:center; padding:11px 14px; border-radius:10px;
+    background:var(--marigold); color:var(--ink); font-weight:800; font-size:14px;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    transition:.2s;
+  }
+  .open-btn:hover{background:var(--marigold-deep);}
+
+  .icon-btn{
+    width:40px; height:40px; border-radius:10px; border:1px solid rgba(247,241,232,0.15);
+    background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:.2s;
+  }
+  .icon-btn:hover{border-color:var(--marigold); color:var(--marigold);}
+
+  .empty-state{
+    text-align:center; padding:80px 20px; color:var(--muted);
+  }
+  .empty-state h3{color:var(--paper); margin-bottom:8px;}
+
+  /* ---------- Admin panel ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,8,18,0.72); backdrop-filter:blur(4px);
+    z-index:50; display:none; align-items:flex-start; justify-content:center;
+    padding:40px 16px; overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .admin-panel{
+    background:var(--paper); color:var(--ink); border-radius:20px; max-width:920px; width:100%;
+    padding:28px; box-shadow:var(--shadow);
+  }
+  .admin-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap:12px;}
+  .admin-head h2{margin:0; font-size:24px;}
+  .close-btn{
+    background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink); line-height:1;
+    width:36px; height:36px; border-radius:50%; transition:.2s;
+  }
+  .close-btn:hover{background:var(--paper-dim);}
+
+  .lock-screen{text-align:center; padding:30px 10px;}
+  .lock-screen input{
+    padding:12px 16px; border-radius:10px; border:1px solid var(--paper-dim); font-size:16px;
+    width:200px; text-align:center; letter-spacing:.2em; margin:14px 0;
+  }
+  .lock-screen button{
+    display:block; margin:0 auto; padding:12px 28px; border-radius:999px; border:none;
+    background:var(--marigold-deep); color:#fff; font-weight:700; cursor:pointer;
+  }
+  .lock-hint{font-size:12px; color:#8a7a86; margin-top:10px;}
+
+  form#productForm{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px;
+  }
+  form#productForm .full{grid-column:1/-1;}
+  .field label{display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; color:#6b5a66;}
+  .field input, .field textarea, .field select{
+    width:100%; padding:11px 13px; border-radius:10px; border:1px solid var(--paper-dim);
+    background:#fff; font-size:14px; outline:none;
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--marigold-deep);}
+  .field textarea{resize:vertical; min-height:70px;}
+
+  .img-input-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .img-input-row input[type=file]{flex:1; min-width:160px;}
+  .img-preview{width:56px; height:56px; border-radius:8px; object-fit:cover; border:1px solid var(--paper-dim); display:none;}
+
+  .form-actions{grid-column:1/-1; display:flex; gap:10px; justify-content:flex-end; margin-top:4px;}
+  .btn-primary{
+    padding:12px 24px; border-radius:999px; border:none; background:var(--ink); color:var(--paper);
+    font-weight:700; cursor:pointer; transition:.2s;
+  }
+  .btn-primary:hover{background:#3a2436;}
+  .btn-secondary{
+    padding:12px 24px; border-radius:999px; border:1px solid var(--paper-dim); background:transparent;
+    color:var(--ink); font-weight:700; cursor:pointer;
+  }
+
+  .admin-list h3{margin-bottom:12px; font-size:16px;}
+  .admin-row{
+    display:flex; align-items:center; gap:12px; padding:10px; border-radius:12px; background:#fff;
+    border:1px solid var(--paper-dim); margin-bottom:8px;
+  }
+  .admin-row img{width:44px; height:44px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--paper-dim);}
+  .admin-row .info{flex:1; min-width:0;}
+  .admin-row .info strong{display:block; font-size:14px;}
+  .admin-row .info span{font-size:12px; color:#7a6a76;}
+  .admin-row .actions{display:flex; gap:6px;}
+  .admin-row button{
+    border:none; background:var(--paper-dim); border-radius:8px; padding:7px 10px; cursor:pointer; font-size:12px; font-weight:700;
+  }
+  .admin-row button.del{background:#f3ded8; color:var(--danger);}
+
+  .note{font-size:12px; color:#8a7a86; margin-top:2px;}
+
+  footer{text-align:center; padding:30px; color:var(--muted); font-size:12px;}
+
+  @media (max-width:640px){
+    header.site-header{padding:14px 16px;}
+    .toolbar{justify-content:stretch; width:100%;}
+    .search-wrap{max-width:none;}
+    main{padding:0 16px 60px;}
+    form#productForm{grid-template-columns:1fr;}
+    .admin-panel{padding:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <h1 class="brand-name">Mee <span>Stall</span></h1>
+  </div>
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchInput" placeholder="Search products...">
+    </div>
+    <select id="categoryFilter"><option value="all">All categories</option></select>
+    <button class="admin-toggle" id="openAdminBtn">+ Add / Manage</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Curated picks, one link away</div>
+  <h1>Everything I recommend, in one stall</h1>
+  <p>Tap any product to open it straight in the app or store it lives on.</p>
+</section>
+
+<main>
+  <div class="grid" id="productGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h3>No products yet</h3>
+    <p>Tap "+ Add / Manage" above to add your first product.</p>
+  </div>
+</main>
+
+<footer>Built with Mee Stall · products are stored on this device</footer>
+
+<!-- Admin overlay -->
+<div class="overlay" id="adminOverlay">
+  <div class="admin-panel">
+
+    <div id="lockScreen" class="lock-screen">
+      <div class="admin-head" style="justify-content:center;">
+        <h2>Enter admin PIN</h2>
+      </div>
+      <input type="password" id="pinInput" inputmode="numeric" maxlength="6" placeholder="••••">
+      <br>
+      <button id="pinSubmit">Unlock</button>
+      <div class="lock-hint">Default PIN is 1234. Change it any time from the manage panel.</div>
+      <button class="close-btn" id="lockCloseBtn" style="position:absolute; top:16px; right:20px;">✕</button>
+    </div>
+
+    <div id="adminContent" style="display:none;">
+      <div class="admin-head">
+        <h2 id="formHeading">Add a product</h2>
+        <button class="close-btn" id="closeAdminBtn">✕</button>
+      </div>
+
+      <form id="productForm">
+        <input type="hidden" id="editId">
+        <div class="field">
+          <label for="pName">Product name</label>
+          <input type="text" id="pName" required placeholder="e.g. Handwoven Cotton Saree">
+        </div>
+        <div class="field">
+          <label for="pCategory">Category</label>
+          <input type="text" id="pCategory" list="categorySuggestions" placeholder="e.g. Fashion, Electronics">
+          <datalist id="categorySuggestions"></datalist>
+        </div>
+        <div class="field full">
+          <label for="pDesc">Description</label>
+          <textarea id="pDesc" placeholder="Short description shown on the card"></textarea>
+        </div>
+        <div class="field">
+          <label for="pPrice">Price</label>
+          <input type="text" id="pPrice" required placeholder="e.g. 799 or ₹799">
+        </div>
+        <div class="field">
+          <label for="pLink">Product link (Meesho, Instagram, YouTube, WhatsApp, etc.)</label>
+          <input type="url" id="pLink" required placeholder="https://...">
+        </div>
+        <div class="field full">
+          <label>Product image</label>
+          <div class="img-input-row">
+            <input type="file" id="pImageFile" accept="image/*">
+            <input type="text" id="pImageUrl" placeholder="...or paste an image URL instead" style="flex:2; min-width:200px;">
+            <img id="imgPreview" class="img-preview" alt="preview">
+          </div>
+          <div class="note">Uploading a file stores the image on this device. Large images use more storage — a URL is lighter.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelEditBtn" style="display:none;">Cancel edit</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Save product</button>
+        </div>
+      </form>
+
+      <div class="admin-list">
+        <h3>Your products (<span id="countLabel">0</span>)</h3>
+        <div id="adminList"></div>
+      </div>
+
+      <details style="margin-top:20px;">
+        <summary style="cursor:pointer; font-size:13px; color:#6b5a66; font-weight:700;">Change admin PIN</summary>
+        <div style="display:flex; gap:10px; margin-top:10px; align-items:center; flex-wrap:wrap;">
+          <input type="password" id="newPin" maxlength="6" placeholder="New PIN" style="width:120px; padding:9px 12px; border-radius:8px; border:1px solid var(--paper-dim);">
+          <button class="btn-secondary" id="savePinBtn" style="padding:9px 18px;">Update PIN</button>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyC8fRO-LIHN4DixutKNMoH3tLRUu1EOu8I",
+    authDomain: "meestall-products.firebaseapp.com",
+    projectId: "meestall-products",
+    storageBucket: "meestall-products.firebasestorage.app",
+    messagingSenderId: "208295637659",
+    appId: "1:208295637659:web:b6cf4915247533ebd0cc3e",
+    measurementId: "G-ZQ91F623CX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+  const productsCol = collection(db, "products");
+
+  const PIN_KEY = 'stall_admin_pin';
+
+  let products = [];
+  let unlocked = false;
+
+  const grid = document.getElementById('productGrid');
+  const emptyState = document.getElementById('emptyState');
+  const searchInput = document.getElementById('searchInput');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const categorySuggestions = document.getElementById('categorySuggestions');
+
+  function getPin(){
+    return localStorage.getItem(PIN_KEY) || '1234';
+  }
+
+  function escapeHtml(str){
+    return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function formatPrice(p){
+    if(/^\s*[₹$€]/.test(p)) return p;
+    if(/^[\d,.]+$/.test(p.trim())) return '₹' + p.trim();
+    return p;
+  }
+
+  function uniqueCategories(){
+    const set = new Set(products.map(p => p.category).filter(Boolean));
+    return Array.from(set).sort();
+  }
+
+  function refreshCategoryUI(){
+    const cats = uniqueCategories();
+    const current = categoryFilter.value;
+    categoryFilter.innerHTML = '<option value="all">All categories</option>' +
+      cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    if(cats.includes(current)) categoryFilter.value = current;
+
+    categorySuggestions.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">`).join('');
+  }
+
+  function render(){
+    const q = searchInput.value.trim().toLowerCase();
+    const cat = categoryFilter.value;
+
+    const filtered = products.filter(p => {
+      const matchesQ = !q || (p.name + ' ' + p.description).toLowerCase().includes(q);
+      const matchesCat = cat === 'all' || p.category === cat;
+      return matchesQ && matchesCat;
+    });
+
+    grid.innerHTML = '';
+    emptyState.style.display = filtered.length ? 'none' : 'block';
+    if(!products.length){
+      emptyState.querySelector('h3').textContent = 'No products yet';
+      emptyState.querySelector('p').textContent = 'Tap "+ Add / Manage" above to add your first product.';
+    } else if(!filtered.length){
+      emptyState.querySelector('h3').textContent = 'No matches';
+      emptyState.querySelector('p').textContent = 'Try a different search term or category.';
+    }
+
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const imgHtml = p.image
+        ? `<a href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer"><img class="card-img" src="${p.image}" alt="${escapeHtml(p.name)}"></a>`
+        : `<a href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer"><div class="card-img-fallback">No image</div></a>`;
+
+      card.innerHTML = `
+        <div class="punch"></div>
+        <div class="price-tag">${escapeHtml(formatPrice(p.price))}</div>
+        ${imgHtml}
+        <div class="card-body">
+          ${p.category ? `<div class="card-cat">${escapeHtml(p.category)}</div>` : ''}
+          <h3 class="card-title"><a href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(p.name)}</a></h3>
+          <p class="card-desc">${escapeHtml(p.description)}</p>
+          <div class="card-footer">
+            <a class="open-btn" href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer">Open Product ↗</a>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  categoryFilter.addEventListener('change', render);
+
+  // ---------- Firestore live sync ----------
+  // onSnapshot keeps every open tab of this page in sync with the latest
+  // Firestore data in real time, so the same link always shows current products.
+  onSnapshot(productsCol, snapshot => {
+    products = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    refreshCategoryUI();
+    render();
+    renderAdminList();
+  }, err => {
+    console.error('Firestore sync error:', err);
+    emptyState.style.display = 'block';
+    emptyState.querySelector('h3').textContent = 'Could not load products';
+    emptyState.querySelector('p').textContent = 'Check your Firestore connection and rules, then refresh.';
+  });
+
+  // ---------- Admin ----------
+  const adminOverlay = document.getElementById('adminOverlay');
+  const lockScreen = document.getElementById('lockScreen');
+  const adminContent = document.getElementById('adminContent');
+  const pinInput = document.getElementById('pinInput');
+
+  document.getElementById('openAdminBtn').addEventListener('click', () => {
+    adminOverlay.classList.add('open');
+    if(unlocked){
+      lockScreen.style.display = 'none';
+      adminContent.style.display = 'block';
+      renderAdminList();
+    } else {
+      lockScreen.style.display = 'block';
+      adminContent.style.display = 'none';
+      pinInput.value = '';
+      pinInput.focus();
+    }
+  });
+
+  function closeAdmin(){ adminOverlay.classList.remove('open'); }
+  document.getElementById('lockCloseBtn').addEventListener('click', closeAdmin);
+  document.getElementById('closeAdminBtn').addEventListener('click', closeAdmin);
+  adminOverlay.addEventListener('click', e => { if(e.target === adminOverlay) closeAdmin(); });
+
+  document.getElementById('pinSubmit').addEventListener('click', unlockAdmin);
+  pinInput.addEventListener('keydown', e => { if(e.key === 'Enter') unlockAdmin(); });
+
+  function unlockAdmin(){
+    if(pinInput.value === getPin()){
+      unlocked = true;
+      lockScreen.style.display = 'none';
+      adminContent.style.display = 'block';
+      renderAdminList();
+    } else {
+      pinInput.style.borderColor = '#D9634A';
+      pinInput.value = '';
+      pinInput.placeholder = 'Wrong PIN';
+    }
+  }
+
+  document.getElementById('savePinBtn').addEventListener('click', () => {
+    const val = document.getElementById('newPin').value.trim();
+    if(val.length >= 4){
+      localStorage.setItem(PIN_KEY, val);
+      document.getElementById('newPin').value = '';
+      alert('PIN updated.');
+    } else {
+      alert('PIN should be at least 4 characters.');
+    }
+  });
+
+  // ---------- Form ----------
+  const form = document.getElementById('productForm');
+  const imgFileInput = document.getElementById('pImageFile');
+  const imgUrlInput = document.getElementById('pImageUrl');
+  const imgPreview = document.getElementById('imgPreview');
+  const editId = document.getElementById('editId');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const formHeading = document.getElementById('formHeading');
+  const submitBtn = document.getElementById('submitBtn');
+
+  let pendingImageBase64 = null;
+
+  imgFileInput.addEventListener('change', () => {
+    const file = imgFileInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingImageBase64 = e.target.result;
+      imgPreview.src = pendingImageBase64;
+      imgPreview.style.display = 'inline-block';
+      imgUrlInput.value = '';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  imgUrlInput.addEventListener('input', () => {
+    if(imgUrlInput.value.trim()){
+      pendingImageBase64 = null;
+      imgFileInput.value = '';
+      imgPreview.src = imgUrlInput.value.trim();
+      imgPreview.style.display = 'inline-block';
+    }
+  });
+
+  function resetForm(){
+    form.reset();
+    editId.value = '';
+    pendingImageBase64 = null;
+    imgPreview.style.display = 'none';
+    formHeading.textContent = 'Add a product';
+    submitBtn.textContent = 'Save product';
+    cancelEditBtn.style.display = 'none';
+  }
+
+  cancelEditBtn.addEventListener('click', resetForm);
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const name = document.getElementById('pName').value.trim();
+    const category = document.getElementById('pCategory').value.trim();
+    const description = document.getElementById('pDesc').value.trim();
+    const price = document.getElementById('pPrice').value.trim();
+    const link = document.getElementById('pLink').value.trim();
+
+    let image = pendingImageBase64 || imgUrlInput.value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+
+    try{
+      if(editId.value){
+        const existing = products.find(p => p.id === editId.value);
+        if(!image) image = existing ? existing.image : '';
+        await updateDoc(doc(db, 'products', editId.value), { name, category, description, price, link, image });
+      } else {
+        await addDoc(productsCol, {
+          name, category, description, price, link, image,
+          createdAt: Date.now()
+        });
+      }
+      resetForm();
+    } catch(err){
+      console.error('Failed to save product:', err);
+      alert('Could not save product. Check your connection and Firestore rules, then try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = editId.value ? 'Update product' : 'Save product';
+    }
+  });
+
+  function renderAdminList(){
+    const list = document.getElementById('adminList');
+    document.getElementById('countLabel').textContent = products.length;
+    if(!products.length){
+      list.innerHTML = '<p class="note">No products added yet.</p>';
+      return;
+    }
+    list.innerHTML = products.map(p => `
+      <div class="admin-row">
+        ${p.image ? `<img src="${p.image}" alt="">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--paper-dim);flex-shrink:0;"></div>`}
+        <div class="info">
+          <strong>${escapeHtml(p.name)}</strong>
+          <span>${escapeHtml(p.category || 'Uncategorized')} · ${escapeHtml(formatPrice(p.price))}</span>
+        </div>
+        <div class="actions">
+          <button data-edit="${p.id}">Edit</button>
+          <button class="del" data-del="${p.id}">Delete</button>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('[data-edit]').forEach(btn => {
+      btn.addEventListener('click', () => startEdit(btn.getAttribute('data-edit')));
+    });
+    list.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-del')));
+    });
+  }
+
+  function startEdit(id){
+    const p = products.find(p => p.id === id);
+    if(!p) return;
+    editId.value = p.id;
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pCategory').value = p.category || '';
+    document.getElementById('pDesc').value = p.description || '';
+    document.getElementById('pPrice').value = p.price || '';
+    document.getElementById('pLink').value = p.link || '';
+    imgUrlInput.value = '';
+    pendingImageBase64 = null;
+    if(p.image){
+      imgPreview.src = p.image;
+      imgPreview.style.display = 'inline-block';
+    } else {
+      imgPreview.style.display = 'none';
+    }
+    formHeading.textContent = 'Edit product';
+    submitBtn.textContent = 'Update product';
+    cancelEditBtn.style.display = 'inline-block';
+    form.scrollIntoView({behavior:'smooth'});
+  }
+
+  async function deleteProduct(id){
+    if(!confirm('Delete this product?')) return;
+    try{
+      await deleteDoc(doc(db, 'products', id));
+    } catch(err){
+      console.error('Failed to delete product:', err);
+      alert('Could not delete product. Check your connection and Firestore rules.');
+    }
+  }
+
+  // ---------- Init ----------
+  refreshCategoryUI();
+  render();
+</script>
+
+</body>
+</html>
